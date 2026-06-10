@@ -14,7 +14,8 @@ interface TerminalToolbarProps {
   sessionId: string;
 }
 
-export function TerminalToolbar({ sessionId: _sessionId }: TerminalToolbarProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function TerminalToolbar(_props: TerminalToolbarProps) {
   return (
     <div className="flex items-center justify-between px-3 py-1 bg-gray-800 border-b border-gray-700">
       <Typography.Text className="text-gray-300 text-xs">
