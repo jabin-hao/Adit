@@ -24,9 +24,7 @@ pub struct SessionManager {
 impl SessionManager {
     /// 创建空的会话管理器
     pub fn new() -> Self {
-        Self {
-            sessions: Arc::new(Mutex::new(HashMap::new())),
-        }
+        Self { sessions: Arc::new(Mutex::new(HashMap::new())) }
     }
 
     /// 创建新会话（占位——不建立真实连接）
@@ -52,12 +50,7 @@ impl SessionManager {
 
     /// 获取会话信息列表（供前端刷新侧边栏）
     pub async fn list_sessions(&self) -> Vec<SessionInfo> {
-        self.sessions
-            .lock()
-            .await
-            .values()
-            .map(|s| s.info.clone())
-            .collect()
+        self.sessions.lock().await.values().map(|s| s.info.clone()).collect()
     }
 
     /// 更新会话状态

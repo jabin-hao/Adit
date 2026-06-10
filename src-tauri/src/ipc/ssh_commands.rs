@@ -16,10 +16,7 @@ pub async fn connect_ssh(
     config.validate().map_err(CommandError::invalid_input)?;
 
     // 创建会话
-    let id = sessions
-        .create_session(&config)
-        .await
-        .map_err(CommandError::io_error)?;
+    let id = sessions.create_session(&config).await.map_err(CommandError::io_error)?;
 
     // TODO: 在这里调用 client::ssh::connect 建立真实的 SSH 连接
     // 连接成功后 emit "ssh-connected" 事件，更新状态为 Connected

@@ -13,10 +13,7 @@ impl SftpClient {
     }
 
     /// 列出目录内容
-    pub async fn list_directory(
-        _sftp_id: &str,
-        _path: &str,
-    ) -> Result<Vec<FileEntry>, String> {
+    pub async fn list_directory(_sftp_id: &str, _path: &str) -> Result<Vec<FileEntry>, String> {
         // TODO: 调用 russh-sftp 的 read_dir
         // 将返回的元数据转换为 FileEntry 列表
         Ok(vec![])

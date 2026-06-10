@@ -5,7 +5,6 @@
 /// 2. 注册 Tauri 命令处理器（ipc/）
 /// 3. 管理 SSH 会话和配置（session/、config/）
 /// 4. 通过 Tauri Event 向前端推送实时数据（event/）
-
 use tauri::Manager;
 
 // ── 模块声明 ──────────────────────────────────────
@@ -89,9 +88,7 @@ pub fn run() {
             // 开发模式：启用日志和 DevTools
             if cfg!(debug_assertions) {
                 app.handle().plugin(
-                    tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
-                        .build(),
+                    tauri_plugin_log::Builder::default().level(log::LevelFilter::Info).build(),
                 )?;
                 if let Some(window) = app.get_webview_window("main") {
                     window.open_devtools();

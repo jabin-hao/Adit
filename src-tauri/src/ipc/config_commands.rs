@@ -33,10 +33,7 @@ pub async fn save_profile(
     profile: Profile,
     profiles: State<'_, ProfileManager>,
 ) -> Result<Profile, CommandError> {
-    profiles
-        .save(profile)
-        .await
-        .map_err(|e| CommandError::io_error(e))
+    profiles.save(profile).await.map_err(|e| CommandError::io_error(e))
 }
 
 /// 列出所有已保存的连接配置
@@ -44,10 +41,7 @@ pub async fn save_profile(
 pub async fn list_profiles(
     profiles: State<'_, ProfileManager>,
 ) -> Result<Vec<Profile>, CommandError> {
-    profiles
-        .load_all()
-        .await
-        .map_err(|e| CommandError::io_error(e))
+    profiles.load_all().await.map_err(|e| CommandError::io_error(e))
 }
 
 /// 删除指定连接配置
@@ -56,16 +50,12 @@ pub async fn delete_profile(
     id: String,
     profiles: State<'_, ProfileManager>,
 ) -> Result<(), CommandError> {
-    profiles
-        .delete(&id)
-        .await
-        .map_err(|e| CommandError::io_error(e))
+    profiles.delete(&id).await.map_err(|e| CommandError::io_error(e))
 }
 
 /// 读取应用设置
 #[tauri::command]
-pub async fn get_settings(
-    // settings: State<'_, AppSettingsManager>,  // TODO: 实现后取消注释
+pub async fn get_settings(// settings: State<'_, AppSettingsManager>,  // TODO: 实现后取消注释
 ) -> Result<AppSettings, CommandError> {
     // TODO: 从磁盘加载设置
     Ok(AppSettings {

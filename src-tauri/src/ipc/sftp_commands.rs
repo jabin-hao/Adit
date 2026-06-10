@@ -14,10 +14,7 @@ pub async fn list_directory(
 
 /// 获取文件/目录元信息
 #[tauri::command]
-pub async fn stat_path(
-    session_id: String,
-    path: String,
-) -> Result<FileEntry, CommandError> {
+pub async fn stat_path(session_id: String, path: String) -> Result<FileEntry, CommandError> {
     // TODO: 调用 russh-sftp 的 stat/metadata
     let _ = (session_id, path);
     Err(CommandError::file_not_found("(占位)"))
@@ -51,10 +48,7 @@ pub async fn write_file(
 
 /// 创建远程目录
 #[tauri::command]
-pub async fn create_directory(
-    session_id: String,
-    path: String,
-) -> Result<(), CommandError> {
+pub async fn create_directory(session_id: String, path: String) -> Result<(), CommandError> {
     // TODO: 调用 russh-sftp 的 create_dir
     let _ = (session_id, path);
     Ok(())
@@ -62,10 +56,7 @@ pub async fn create_directory(
 
 /// 删除文件或空目录
 #[tauri::command]
-pub async fn remove_entry(
-    session_id: String,
-    path: String,
-) -> Result<(), CommandError> {
+pub async fn remove_entry(session_id: String, path: String) -> Result<(), CommandError> {
     // TODO: 调用 russh-sftp 的 remove_file / remove_dir
     let _ = (session_id, path);
     Ok(())

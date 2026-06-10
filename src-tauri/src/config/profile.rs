@@ -13,10 +13,7 @@ pub struct ProfileManager {
 impl ProfileManager {
     /// 创建管理器，app_data_dir 由 Tauri 提供
     pub fn new(app_data_dir: PathBuf) -> Self {
-        Self {
-            file_path: app_data_dir.join("profiles.json"),
-            cache: Mutex::new(None),
-        }
+        Self { file_path: app_data_dir.join("profiles.json"), cache: Mutex::new(None) }
     }
 
     /// 读取所有配置（带内存缓存）

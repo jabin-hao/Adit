@@ -14,10 +14,7 @@ pub struct CommandError {
 
 impl CommandError {
     pub fn new(code: impl Into<String>, message: impl Into<String>) -> Self {
-        Self {
-            code: code.into(),
-            message: message.into(),
-        }
+        Self { code: code.into(), message: message.into() }
     }
 
     // ── 常用错误构造快捷方法 ──

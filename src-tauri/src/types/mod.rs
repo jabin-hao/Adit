@@ -2,7 +2,6 @@
 ///
 /// 所有 struct 通过 serde 序列化，前后端共享。
 /// 前端在 `src/lib/types.ts` 中维护对应的 TypeScript interface。
-
 pub mod connection;
 pub mod error;
 pub mod session;

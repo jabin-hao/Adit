@@ -15,16 +15,14 @@ pub struct DataChannel {
 
 impl DataChannel {
     /// 创建一对通道，buffer_size 控制缓冲区大小
-    pub fn new(buffer_size: usize) -> (Self, mpsc::Receiver<Vec<u8>>, mpsc::Sender<Vec<u8>>, mpsc::Sender<Vec<u8>>) {
+    pub fn new(
+        buffer_size: usize,
+    ) -> (Self, mpsc::Receiver<Vec<u8>>, mpsc::Sender<Vec<u8>>, mpsc::Sender<Vec<u8>>) {
         let (stdin_tx, stdin_rx) = mpsc::channel(buffer_size);
         let (stdout_tx, stdout_rx) = mpsc::channel(buffer_size);
         let (stderr_tx, stderr_rx) = mpsc::channel(buffer_size);
 
-        let channel = Self {
-            stdin_tx,
-            stdout_rx,
-            stderr_rx,
-        };
+        let channel = Self { stdin_tx, stdout_rx, stderr_rx };
 
         (channel, stdin_rx, stdout_tx, stderr_tx)
     }

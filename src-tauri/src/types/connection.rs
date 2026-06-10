@@ -23,9 +23,7 @@ pub struct ConnectRequest {
 pub enum AuthMethod {
     /// 密码认证
     #[serde(rename = "password")]
-    Password {
-        password: String,
-    },
+    Password { password: String },
     /// 私钥认证
     #[serde(rename = "key")]
     Key {
