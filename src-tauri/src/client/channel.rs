@@ -14,12 +14,8 @@ pub struct DataChannel {
 }
 
 /// DataChannel::new 的返回类型
-pub type ChannelPair = (
-    DataChannel,
-    mpsc::Receiver<Vec<u8>>,
-    mpsc::Sender<Vec<u8>>,
-    mpsc::Sender<Vec<u8>>,
-);
+pub type ChannelPair =
+    (DataChannel, mpsc::Receiver<Vec<u8>>, mpsc::Sender<Vec<u8>>, mpsc::Sender<Vec<u8>>);
 
 impl DataChannel {
     /// 创建一对通道，buffer_size 控制缓冲区大小
