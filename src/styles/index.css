@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+/* ── 全局重置 ── */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── xterm.js 容器 ── */
+.xterm {
+  height: 100%;
+  padding: 4px;
+}
+
+/* ── Ant Design Tabs 填充内容区 ── */
+.ant-tabs {
+  height: 100%;
+}
+
+.ant-tabs-content {
+  height: 100%;
+}
+
+.ant-tabs-tabpane {
+  height: 100%;
+  overflow: auto;
+}
