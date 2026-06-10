@@ -13,11 +13,17 @@ pub struct DataChannel {
     pub stderr_rx: mpsc::Receiver<Vec<u8>>,
 }
 
+/// DataChannel::new 的返回类型
+pub type ChannelPair = (
+    DataChannel,
+    mpsc::Receiver<Vec<u8>>,
+    mpsc::Sender<Vec<u8>>,
+    mpsc::Sender<Vec<u8>>,
+);
+
 impl DataChannel {
     /// 创建一对通道，buffer_size 控制缓冲区大小
-    pub fn new(
-        buffer_size: usize,
-    ) -> (Self, mpsc::Receiver<Vec<u8>>, mpsc::Sender<Vec<u8>>, mpsc::Sender<Vec<u8>>) {
+    pub fn new(buffer_size: usize) -> ChannelPair {
         let (stdin_tx, stdin_rx) = mpsc::channel(buffer_size);
         let (stdout_tx, stdout_rx) = mpsc::channel(buffer_size);
         let (stderr_tx, stderr_rx) = mpsc::channel(buffer_size);

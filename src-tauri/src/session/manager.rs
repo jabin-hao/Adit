@@ -21,6 +21,12 @@ pub struct SessionManager {
     sessions: Arc<Mutex<HashMap<String, Session>>>,
 }
 
+impl Default for SessionManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SessionManager {
     /// 创建空的会话管理器
     pub fn new() -> Self {
