@@ -85,7 +85,7 @@ jobs:
         run: bun install
 
       - name: 前端单元测试
-        run: bun test -- --run
+        run: bun run test
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
