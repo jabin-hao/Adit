@@ -2,6 +2,7 @@
 ///
 /// # 示例
 /// ```
+/// # use adit_lib::utils::path::safe_join_path;
 /// let result = safe_join_path("/home/user", "documents");
 /// assert_eq!(result.unwrap(), "/home/user/documents");
 ///
