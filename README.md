@@ -36,6 +36,7 @@ A cross-platform SSH/SFTP client built with [Tauri](https://tauri.app) + [React]
 
 - [Rust](https://rustup.rs) >= 1.77
 - [Bun](https://bun.sh) >= 1.1
+- Platform build dependencies (see [Tauri Prerequisites](https://tauri.app/start/prerequisites/))
 
 ### Install & Run
 
@@ -52,16 +53,6 @@ bun dev
 bun run build
 ```
 
-## Project Structure
-
-```
-adit/
-├── src/                # React frontend (TypeScript, Ant Design, Zustand)
-├── src-tauri/          # Rust backend (russh, tokio, Tauri commands)
-├── docs/               # Documentation
-└── README.md
-```
-
 ## Tech Stack
 
 | Layer | Technology |
@@ -72,6 +63,16 @@ adit/
 | UI | Ant Design 5 + Tailwind CSS |
 | Terminal | xterm.js |
 | State | Zustand |
+
+## Project Structure
+
+```
+adit/
+├── src/                # React frontend (TypeScript, Ant Design, Zustand)
+├── src-tauri/          # Rust backend (russh, tokio, Tauri commands)
+├── docs/               # Documentation
+└── README.md
+```
 
 ## Commands
 
@@ -88,6 +89,28 @@ adit/
 
 - [中文文档](./docs/README.zh-CN.md)
 
+## Contributing
+
+Issues and PRs are welcome!
+
+```bash
+bun run lint
+bun run check
+```
+
+Please ensure:
+- Code passes lint and type checks
+- New features include tests
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org)
+
 ## License
 
-[MIT](LICENSE) © 2026 Jianbin Hao
+[MIT](LICENSE) © 2026 Jabin Hao
+
+---
+
+## Links
+
+- [Tauri Docs](https://tauri.app/docs)
+- [russh Docs](https://docs.rs/russh)
+- [xterm.js Docs](https://xtermjs.org)
