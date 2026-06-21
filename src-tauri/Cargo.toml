@@ -13,15 +13,28 @@ name = "adit_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.6.1" }
+tauri-build = { version = "2.6.1", features = [] }
 
 [dependencies]
 log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tauri = { version = "2.11.1" }
+tauri = { version = "2.11.1", features = [] }
 tauri-plugin-log = "2"
 tauri-plugin-shell = "2"
 tauri-plugin-clipboard-manager = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
+tokio = { version = "1", features = ["full"] }
+russh = "0.44"
+russh-sftp = "2.0"
+anyhow = "1.0"
+thiserror = "2.0"
+uuid = { version = "1", features = ["v4"] }
+tracing = "0.1"
+
+[dev-dependencies]
+russh-keys = "0.44"
+tempfile = "3"
+portpicker = "0.1"
+tokio-test = "0.4"

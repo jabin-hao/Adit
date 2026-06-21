@@ -15,6 +15,9 @@ export default defineConfig({
     // 开发时通过局域网 IP 向 Tauri 暴露
     host: host || false,
     port: 1420,
+    watch: {
+      ignored: ["**/src-tauri/target/**"],
+    },
   },
   // Env 变量前缀
   envPrefix: ["VITE_", "TAURI_"],

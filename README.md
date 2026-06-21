@@ -1,133 +1,116 @@
+<p align="center">
+  <img src="docs/logo.png" alt="Adit Logo" width="128">
+</p>
+
 # Adit
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Tauri](https://img.shields.io/badge/Tauri-2.x-24C8DB?logo=tauri)](https://tauri.app)
-[![Rust](https://img.shields.io/badge/Rust-1.77+-orange?logo=rust)](https://www.rust-lang.org)
-[![React](https://img.shields.io/badge/React-18-blue?logo=react)](https://react.dev)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="https://github.com/jabin-hao/Adit/releases"><img src="https://img.shields.io/github/v/release/jabin-hao/Adit" alt="Release"></a>
+  <a href="https://github.com/jabin-hao/Adit/stargazers"><img src="https://img.shields.io/github/stars/jabin-hao/Adit" alt="Stars"></a>
+  <br>
+  <img src="https://img.shields.io/badge/Rust-1.77+-orange?logo=rust" alt="Rust">
+  <img src="https://img.shields.io/badge/Tauri-2.x-ffc131?logo=tauri" alt="Tauri">
+  <img src="https://img.shields.io/badge/React-19-61dafb?logo=react" alt="React">
+  <img src="https://img.shields.io/badge/TypeScript-5.x-3178c6?logo=typescript" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Bun-1.1+-fbf0df?logo=bun" alt="Bun">
+  <img src="https://img.shields.io/badge/Tailwind-4-06b6d4?logo=tailwindcss" alt="Tailwind">
+</p>
 
-**Adit** 是一款现代化的跨平台 SSH/SFTP 客户端，基于 [Tauri](https://tauri.app) 构建，兼具原生性能与 Web 技术的灵活界面。
+> *Adit* — a mine entrance, your gateway to remote servers.
 
-> **Adit** 一词意为矿井的水平入口，象征着进入远程服务器的通道。
+A cross-platform SSH/SFTP client built with [Tauri](https://tauri.app) + [React](https://react.dev) + [Rust](https://www.rust-lang.org).
 
-<!-- ![截图占位](https://via.placeholder.com/800x450?text=Adit+Screenshot) -->
+## Features
 
-## ✨ 特性
+- 🔐 **SSH/SFTP** — password, key, and SSH agent authentication
+- 📁 **File Manager** — browse, upload, download, and edit remote files
+- 🖥️ **Terminal** — full SSH terminal emulation via xterm.js
+- 📋 **Tabbed UI** — manage multiple servers in one window
+- 🎨 **Light/Dark** — Ant Design theme switching
+- ⚡ **Lightweight** — ~5MB binary, Rust backend for I/O
 
-| 特性 | 说明 |
-|------|------|
-| 🖥️ **跨平台** | Windows、macOS、Linux 原生支持，体积小、内存占用低 |
-| 🔐 **SSH/SFTP** | 支持密码、密钥、代理跳转等多种连接方式 |
-| 📁 **文件管理** | 图形化 SFTP 文件浏览，拖拽上传下载 |
-| 🎨 **现代界面** | React + Ant Design，支持明暗主题切换 |
-| ⚡ **高性能** | Rust 后端处理网络 I/O，Bun 运行时驱动前端 |
-| 🔧 **配置管理** | 导入/导出连接配置，多 Profile 支持 |
-| 📋 **剪贴板同步** | 终端与本地系统剪贴板互通 |
+## Quick Start
 
-## 📋 路线图
-
-- [ ] 多标签页支持
-- [ ] SSH 端口转发
-- [ ] 会话保存与恢复
-- [ ] 快捷命令片段
-- [ ] 内置文本编辑器
-
-## 🛠️ 技术栈
-
-| 层级 | 技术 |
-|------|------|
-| 桌面框架 | [Tauri 2.x](https://tauri.app) |
-| 后端语言 | [Rust](https://www.rust-lang.org) (1.77+) |
-| SSH 库 | [russh](https://github.com/warp-tech/russh) |
-| 前端运行时 | [Bun](https://bun.sh) (1.1+) |
-| UI 框架 | [React 18](https://react.dev) + [TypeScript](https://www.typescriptlang.org) |
-| 组件库 | [Ant Design](https://ant.design) |
-| 终端组件 | [xterm.js](https://xtermjs.org) |
-| 状态管理 | [Zustand](https://zustand-demo.pmnd.rs) |
-| 样式 | [Tailwind CSS](https://tailwindcss.com) |
-
-## 🚀 快速开始
-
-### 前置依赖
+### Prerequisites
 
 - [Rust](https://rustup.rs) >= 1.77
 - [Bun](https://bun.sh) >= 1.1
-- 平台构建依赖（参考 [Tauri 前置要求](https://tauri.app/start/prerequisites/)）
+- Platform build dependencies (see [Tauri Prerequisites](https://tauri.app/start/prerequisites/))
 
-### 开发
+### Install & Run
 
 ```bash
-# 克隆仓库
-git clone https://github.com/your-org/adit.git
+git clone https://github.com/jabin-hao/Adit.git
 cd adit
-
-# 安装前端依赖
 bun install
-
-# 启动开发模式（热更新）
-bun tauri dev
+bun dev
 ```
 
-### 构建
+### Build
 
 ```bash
-# 生产构建
-bun tauri build
+bun run build
 ```
 
-构建产物位于 `src-tauri/target/release/`。
+## Tech Stack
 
-## 📁 项目结构
+| Layer | Technology |
+|-------|-----------|
+| Desktop | Tauri 2.x |
+| Backend | Rust + russh + tokio |
+| Frontend | React 19 + TypeScript + Bun |
+| UI | Ant Design 5 + Tailwind CSS |
+| Terminal | xterm.js |
+| State | Zustand |
+
+## Project Structure
 
 ```
 adit/
-├── src/                    # React 前端源码
-│   ├── components/         # UI 组件
-│   ├── hooks/              # 自定义 Hooks
-│   ├── store/              # Zustand 状态管理
-│   ├── lib/                # 工具函数
-│   ├── App.tsx             # 根组件
-│   └── main.tsx            # 入口文件
-├── src-tauri/              # Tauri + Rust 后端
-│   ├── src/
-│   │   ├── main.rs         # 入口
-│   │   ├── lib.rs          # 核心库
-│   │   ├── commands/       # Tauri 命令定义
-│   │   ├── ssh/            # SSH/SFTP 会话管理
-│   │   └── config/         # 配置管理
-│   ├── Cargo.toml          # Rust 依赖
-│   └── tauri.conf.json     # Tauri 配置
-├── public/                 # 静态资源
-├── package.json            # 前端依赖
-├── tsconfig.json           # TypeScript 配置
-├── tailwind.config.js      # Tailwind 配置
-├── bun.lockb               # Bun 锁文件
+├── src/                # React frontend (TypeScript, Ant Design, Zustand)
+├── src-tauri/          # Rust backend (russh, tokio, Tauri commands)
+├── docs/               # Documentation
 └── README.md
 ```
 
-## 🤝 贡献指南
+## Commands
 
-欢迎提交 Issue 和 Pull Request！
+| Command | Description |
+|---------|-------------|
+| `bun dev` | Start dev mode |
+| `bun run build` | Production build |
+| `bun run lint` | ESLint check |
+| `bun run check` | TypeScript check |
+| `bun test` | Run frontend tests |
+| `cargo test` | Run Rust tests |
+
+## Documentation
+
+- [中文文档](./docs/README.zh-CN.md)
+
+## Contributing
+
+Issues and PRs are welcome!
 
 ```bash
-# 开发前检查
 bun run lint
 bun run check
 ```
 
-请确保：
-- 代码通过 Lint 和类型检查
-- 新功能包含必要的测试
-- 提交信息遵循 [Conventional Commits](https://www.conventionalcommits.org)
+Please ensure:
+- Code passes lint and type checks
+- New features include tests
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org)
 
-## 📄 许可
+## License
 
 [MIT](LICENSE) © 2026 Jabin Hao
 
 ---
 
-## 🔗 相关链接
+## Links
 
-- [Tauri 文档](https://tauri.app/docs)
-- [russh 文档](https://docs.rs/russh)
-- [xterm.js 文档](https://xtermjs.org)
-```
+- [Tauri Docs](https://tauri.app/docs)
+- [russh Docs](https://docs.rs/russh)
+- [xterm.js Docs](https://xtermjs.org)

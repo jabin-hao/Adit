@@ -1,64 +1,30 @@
 /// Adit — 跨平台 SSH/SFTP 客户端
 ///
-/// Tauri 后端，负责窗口管理、系统调用和 IPC 通信。
-
-use serde::{Deserialize, Serialize};
+/// Tauri 后端入口，负责：
+/// 1. 定义 IPC 数据类型（types/）
+/// 2. 注册 Tauri 命令处理器（ipc/）
+/// 3. 管理 SSH 会话和配置（session/、config/）
+/// 4. 通过 Tauri Event 向前端推送实时数据（event/）
 use tauri::Manager;
 
-// ── 数据类型定义 ──────────────────────────────────────
+// ── 模块声明 ──────────────────────────────────────
 
-/// 连接配置
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ConnectionConfig {
-    /// 显示名称
-    pub name: String,
-    /// 主机地址
-    pub host: String,
-    /// 端口（默认 22）
-    pub port: u16,
-    /// 用户名
-    pub username: String,
-    /// 认证方式
-    pub auth: AuthMethod,
-}
+pub mod client;
+pub mod config;
+pub mod event;
+pub mod ipc;
+pub mod session;
+pub mod types;
+pub mod utils;
 
-/// 认证方式
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(tag = "type")]
-pub enum AuthMethod {
-    /// 密码认证
-    #[serde(rename = "password")]
-    Password { password: String },
-    /// 密钥认证
-    #[serde(rename = "key")]
-    Key {
-        /// 私钥路径
-        key_path: String,
-        /// 密钥口令（可选）
-        passphrase: Option<String>,
-    },
-    /// 免密（从 ssh-agent 获取）
-    #[serde(rename = "agent")]
-    Agent,
-}
+// ── 类型重导出（前端通过 invoke 使用） ──────────
 
-/// 会话信息（前端展示用）
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SessionInfo {
-    pub id: String,
-    pub config: ConnectionConfig,
-    pub status: SessionStatus,
-}
+pub use types::connection::{AuthMethod, ConnectRequest, DisconnectRequest, PtyResizeRequest};
+pub use types::error::CommandError;
+pub use types::session::{SessionInfo, SessionStatus};
+pub use types::sftp::{FileEntry, FileType};
 
-/// 会话状态
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum SessionStatus {
-    Connecting,
-    Connected,
-    Disconnected,
-}
-
-// ── Tauri 命令 ──────────────────────────────────────
+// ── 旧版命令（保留兼容） ──────────────────────────
 
 /// 获取应用版本号
 #[tauri::command]
@@ -66,21 +32,10 @@ fn get_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
-/// 验证连接配置（供前端校验表单）
+/// 验证连接配置
 #[tauri::command]
-fn validate_config(config: ConnectionConfig) -> Result<ConnectionConfig, String> {
-    if config.name.trim().is_empty() {
-        return Err("名称不能为空".into());
-    }
-    if config.host.trim().is_empty() {
-        return Err("主机地址不能为空".into());
-    }
-    if config.port == 0 {
-        return Err("端口号无效".into());
-    }
-    if config.username.trim().is_empty() {
-        return Err("用户名不能为空".into());
-    }
+fn validate_config(config: ConnectRequest) -> Result<ConnectRequest, String> {
+    config.validate()?;
     Ok(config)
 }
 
@@ -89,21 +44,57 @@ fn validate_config(config: ConnectionConfig) -> Result<ConnectionConfig, String>
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        // ── Tauri 插件 ──
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
-        .invoke_handler(tauri::generate_handler![get_version, validate_config])
+        // ── 注册所有命令 ──
+        .invoke_handler(tauri::generate_handler![
+            // 旧版
+            get_version,
+            validate_config,
+            // SSH 命令
+            ipc::ssh_commands::connect_ssh,
+            ipc::ssh_commands::disconnect_ssh,
+            ipc::ssh_commands::write_stdin,
+            ipc::ssh_commands::resize_pty,
+            ipc::ssh_commands::exec_command,
+            // SFTP 命令
+            ipc::sftp_commands::list_directory,
+            ipc::sftp_commands::stat_path,
+            ipc::sftp_commands::read_file,
+            ipc::sftp_commands::write_file,
+            ipc::sftp_commands::create_directory,
+            ipc::sftp_commands::remove_entry,
+            ipc::sftp_commands::rename_entry,
+            // 配置命令
+            ipc::config_commands::save_profile,
+            ipc::config_commands::list_profiles,
+            ipc::config_commands::delete_profile,
+            ipc::config_commands::get_settings,
+            ipc::config_commands::save_settings,
+        ])
+        // ── 应用初始化 ──
         .setup(|app| {
+            // 注入 SessionManager 和 ProfileManager 为 Tauri managed state
+            let session_mgr = session::SessionManager::new();
+            app.manage(session_mgr);
+
+            let app_data_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
+            let profile_mgr = config::ProfileManager::new(app_data_dir);
+            app.manage(profile_mgr);
+
+            // 开发模式：启用日志和 DevTools
             if cfg!(debug_assertions) {
                 app.handle().plugin(
-                    tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
-                        .build(),
+                    tauri_plugin_log::Builder::default().level(log::LevelFilter::Info).build(),
                 )?;
-                let window = app.get_webview_window("main").unwrap();
-                window.open_devtools();
+                if let Some(window) = app.get_webview_window("main") {
+                    window.open_devtools();
+                }
             }
+
             Ok(())
         })
         .run(tauri::generate_context!())
