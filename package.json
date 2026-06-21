@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tauri dev",
+    "vite": "vite",
     "build": "tauri build",
     "lint": "eslint .",
     "check": "tsc -b --noEmit",
