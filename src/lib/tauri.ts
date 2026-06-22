@@ -15,6 +15,7 @@ import type {
   FileEntry,
   Profile,
   PtyResizeRequest,
+  ServerStats,
   SftpCompletedPayload,
   SftpProgressPayload,
   SshConnectedPayload,
@@ -48,6 +49,13 @@ export const tauri = {
   /** 执行单条命令（非交互式） */
   execCommand(sessionId: string, command: string, timeoutSecs: number): Promise<string> {
     return invoke("exec_command", { sessionId, command, timeoutSecs });
+  },
+
+  // ── 服务器状态命令 ──────────────────────────────
+
+  /** 获取服务器状态（CPU/内存/负载/磁盘/运行时长） */
+  getServerStats(sessionId: string): Promise<ServerStats> {
+    return invoke<ServerStats>("get_server_stats", { sessionId });
   },
 
   // ── SFTP 命令 ──────────────────────────────────
