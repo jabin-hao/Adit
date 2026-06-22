@@ -60,6 +60,8 @@ pub fn run() {
             ipc::ssh_commands::write_stdin,
             ipc::ssh_commands::resize_pty,
             ipc::ssh_commands::exec_command,
+            // 服务器状态命令
+            ipc::stats_commands::get_server_stats,
             // SFTP 命令
             ipc::sftp_commands::list_directory,
             ipc::sftp_commands::stat_path,

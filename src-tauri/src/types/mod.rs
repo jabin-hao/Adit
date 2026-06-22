@@ -6,9 +6,11 @@ pub mod connection;
 pub mod error;
 pub mod session;
 pub mod sftp;
+pub mod stats;
 
 // 重导出常用类型
 pub use connection::{AuthMethod, ConnectRequest, DisconnectRequest, PtyResizeRequest};
 pub use error::CommandError;
 pub use session::{SessionInfo, SessionStatus};
 pub use sftp::{FileEntry, FileType};
+pub use stats::ServerStats;
