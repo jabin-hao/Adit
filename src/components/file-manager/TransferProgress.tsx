@@ -1,11 +1,10 @@
-/**
- * 文件传输进度条
- *
- * TODO: 监听 sftp-progress 事件，使用 Ant Design Progress 组件展示
- */
-import { Empty } from "antd";
+import { IconFileX } from "@tabler/icons-react";
 
 export function TransferProgress() {
-  // TODO: 从 fileStore 读取传输任务，渲染进度条列表
-  return <Empty description="无传输任务" />;
+  return (
+    <div className="flex flex-col items-center justify-center py-4 text-muted-foreground text-xs gap-1.5">
+      <IconFileX size={20} className="opacity-40" />
+      <span>无传输任务</span>
+    </div>
+  );
 }
