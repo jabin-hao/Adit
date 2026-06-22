@@ -1,201 +1,141 @@
-/**
- * 根布局组件
- *
- * 结构：Layout(Sider + Content + Footer)
- * - Sider: ConnectionList（连接列表）
- * - Content: Tabs（首页 / 终端 / SFTP）
- * - Footer: StatusBar
- */
 import { useCallback, useEffect, useState } from "react";
-import { ConfigProvider, Layout, Tabs, theme } from "antd";
-import type { TabsProps } from "antd";
-import { useSessionStore } from "./store/sessionStore";
-import { useAppTheme } from "./hooks/useAppTheme";
-import { tauri } from "./lib/tauri";
-import { ConnectionList } from "./components/connection/ConnectionList";
-import { ConnectionForm, type FormValues } from "./components/connection/ConnectionForm";
-import { StatusBar } from "./components/common/StatusBar";
-import { ThemeToggle } from "./components/common/ThemeToggle";
-import { HomePage } from "./pages/HomePage";
-import { TerminalPage } from "./pages/TerminalPage";
-import { FileManagerPage } from "./pages/FileManagerPage";
-import { SettingsPage } from "./pages/SettingsPage";
-import type { Profile } from "./lib/types";
-import "./styles/index.css";
-
-const { Sider, Content, Footer } = Layout;
+import { IconTerminal2, IconFolder, IconLayoutSidebarLeftCollapse, IconLayoutSidebarLeftExpand, IconLayoutSidebarRightCollapse, IconLayoutSidebarRightExpand } from "@tabler/icons-react";
+import { ServerStatsPanel } from "@/components/server-stats/ServerStatsPanel";
+import { useSessionStore } from "@/store/sessionStore";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { tauri } from "@/lib/tauri";
+import { ConnectionList } from "@/components/connection/ConnectionList";
+import { ConnectionForm, type FormValues } from "@/components/connection/ConnectionForm";
+import { HomePage } from "@/pages/HomePage";
+import { TerminalPage } from "@/pages/TerminalPage";
+import { FileManagerPage } from "@/pages/FileManagerPage";
+import { SettingsPage } from "@/pages/SettingsPage";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { BottomBar } from "@/components/common/BottomBar";
+import type { Profile } from "@/lib/types";
+import "@/styles/index.css";
 
 function App() {
   const [formOpen, setFormOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [rightCollapsed, setRightCollapsed] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
-
   const { theme: appTheme } = useAppTheme();
-  const {
-    tabs,
-    activeTabKey,
-    profiles,
-    setProfiles,
-    addProfile,
-    removeProfile,
-    openTerminalTab,
-    closeTab,
-    setActiveTab,
-  } = useSessionStore();
+  const { tabs, activeTabKey, profiles, setProfiles, addProfile, removeProfile, openTerminalTab, closeTab, setActiveTab } = useSessionStore();
 
-  // 加载已保存的 profiles
+  useEffect(() => { tauri.listProfiles().then(setProfiles).catch(console.error); }, [setProfiles]);
   useEffect(() => {
-    tauri.listProfiles().then(setProfiles).catch(console.error);
-  }, [setProfiles]);
+    document.documentElement.classList.toggle("dark",
+      appTheme === "dark" || (appTheme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches));
+  }, [appTheme]);
 
-  // 处理连接表单提交
-  const handleSaveProfile = useCallback(
-    async (values: FormValues) => {
-      const profile: Profile = {
-        id: editingProfile?.id ?? "",
-        ...values,
-        created_at: editingProfile?.created_at ?? 0,
-        updated_at: 0,
-      };
-      try {
-        const saved = await tauri.saveProfile(profile);
-        addProfile(saved);
-        setFormOpen(false);
-        setEditingProfile(null);
-      } catch (err) {
-        console.error("保存失败:", err);
-      }
-    },
-    [editingProfile, addProfile],
-  );
+  const handleSaveProfile = useCallback(async (values: FormValues) => {
+    const profile: Profile = { id: editingProfile?.id ?? "", ...values, created_at: editingProfile?.created_at ?? 0, updated_at: 0 };
+    try { const saved = await tauri.saveProfile(profile); addProfile(saved); setFormOpen(false); setEditingProfile(null); }
+    catch (err) { console.error(err); }
+  }, [editingProfile, addProfile]);
 
-  // 处理删除 profile
-  const handleDeleteProfile = useCallback(
-    async (id: string) => {
-      await tauri.deleteProfile(id);
-      removeProfile(id);
-    },
-    [removeProfile],
-  );
+  const handleDeleteProfile = useCallback(async (id: string) => { await tauri.deleteProfile(id); removeProfile(id); }, [removeProfile]);
+  const handleConnect = useCallback((profile: Profile) => { openTerminalTab(profile.id, profile.name); }, [openTerminalTab]);
 
-  // 从 connection list 双击连接
-  const handleConnect = useCallback(
-    (profile: Profile) => {
-      openTerminalTab(profile.id, profile.name);
-    },
-    [openTerminalTab],
-  );
+  // ── 分组管理 ──
+  const handleRenameGroup = useCallback(async (oldName: string, newName: string) => {
+    const affected = profiles.filter((p) => p.group === oldName);
+    for (const p of affected) {
+      try { const saved = await tauri.saveProfile({ ...p, group: newName }); addProfile(saved); } catch (err) { console.error(err); }
+    }
+  }, [profiles, addProfile]);
 
-  // 构建 Tabs items
-  const tabItems: TabsProps["items"] = [
-    // 首页固定标签页
-    {
-      key: "home",
-      label: "🏠 首页",
-      closable: false,
-      children: (
-        <HomePage
-          onOpenTerminal={(sessionId, title) => openTerminalTab(sessionId, title)}
-        />
-      ),
-    },
-    // 设置固定标签页
-    {
-      key: "settings",
-      label: "⚙️ 设置",
-      closable: false,
-      children: <SettingsPage />,
-    },
-    // 动态会话标签页
-    ...tabs.map((tab) => ({
-      key: tab.key,
-      label: tab.title,
-      closable: true,
-      children:
-        tab.type === "terminal" ? (
-          <TerminalPage sessionId={tab.sessionId} />
-        ) : (
-          <FileManagerPage sessionId={tab.sessionId} />
-        ),
-    })),
-  ];
+  const handleUngroup = useCallback(async (group: string) => {
+    const affected = profiles.filter((p) => p.group === group);
+    for (const p of affected) {
+      try { const saved = await tauri.saveProfile({ ...p, group: "" }); addProfile(saved); } catch (err) { console.error(err); }
+    }
+  }, [profiles, addProfile]);
 
-  // 确定 Ant Design 主题算法
-  const antdTheme = {
-    algorithm:
-      appTheme === "dark"
-        ? theme.darkAlgorithm
-        : theme.defaultAlgorithm,
-    token: { borderRadius: 6 },
-  };
+  const handleMoveToGroup = useCallback(async (profileId: string, group: string) => {
+    const p = profiles.find((pr) => pr.id === profileId);
+    if (!p) return;
+    try { const saved = await tauri.saveProfile({ ...p, group }); addProfile(saved); } catch (err) { console.error(err); }
+  }, [profiles, addProfile]);
+
+  // 仅动态终端/SFTP 标签；Home/Settings 不再作为静态标签（T2）
+  const effectiveKey = activeTabKey && tabs.some((t) => t.key === activeTabKey) ? activeTabKey : (tabs[0]?.key ?? "");
+  const activeTab = tabs.find((t) => t.key === effectiveKey);
 
   return (
-    <ConfigProvider theme={antdTheme}>
-      <Layout style={{ height: "100vh" }}>
-        {/* 左侧边栏 */}
-        <Sider
-          width={280}
-          theme={appTheme === "dark" ? "dark" : "light"}
-          className="overflow-hidden"
-        >
-          <ConnectionList
-            profiles={profiles}
-            onConnect={handleConnect}
-            onEdit={(p) => {
-              setEditingProfile(p);
-              setFormOpen(true);
-            }}
-            onDelete={handleDeleteProfile}
-            onCreate={() => {
-              setEditingProfile(null);
-              setFormOpen(true);
-            }}
-          />
-        </Sider>
-
-        {/* 主区域 */}
-        <Layout>
-          {/* 顶部操作栏 */}
-          <div className="flex items-center justify-end px-3 py-1 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-            <ThemeToggle />
+    <TooltipProvider>
+      <div className="h-screen flex flex-col">
+        {/* VS Code 风格顶部 header */}
+        <header className="flex items-center justify-between h-9 px-4 border-b bg-background select-none shrink-0">
+          <span className="text-[11px] font-semibold text-muted-foreground tracking-wider">Adit</span>
+          <div className="flex items-center gap-0.5">
+            <Button variant="ghost" size="icon"
+              onClick={() => setSidebarCollapsed(v => !v)}
+              className="size-7 text-muted-foreground hover:text-foreground"
+              aria-label={sidebarCollapsed ? "展开左侧栏" : "折叠左侧栏"}>
+              {sidebarCollapsed ? <IconLayoutSidebarLeftExpand size={15} /> : <IconLayoutSidebarLeftCollapse size={15} />}
+            </Button>
+            <Button variant="ghost" size="icon"
+              onClick={() => setRightCollapsed(v => !v)}
+              className="size-7 text-muted-foreground hover:text-foreground"
+              aria-label={rightCollapsed ? "展开右侧栏" : "折叠右侧栏"}>
+              {rightCollapsed ? <IconLayoutSidebarRightExpand size={15} /> : <IconLayoutSidebarRightCollapse size={15} />}
+            </Button>
           </div>
+        </header>
+        <div className="flex flex-1 overflow-hidden">
+          <aside className={cn(
+            "border-r bg-sidebar border-sidebar-border flex-shrink-0 overflow-hidden transition-all duration-200",
+            sidebarCollapsed ? "w-0 border-r-0" : "w-[270px]"
+          )}>
+            {!sidebarCollapsed && (
+              <ConnectionList profiles={profiles} onConnect={handleConnect}
+                onEdit={(p) => { setEditingProfile(p); setFormOpen(true); }}
+                onDelete={handleDeleteProfile} onCreate={() => { setEditingProfile(null); setFormOpen(true); }}
+                onRenameGroup={handleRenameGroup} onUngroup={handleUngroup} onMoveToGroup={handleMoveToGroup} />
+            )}
+          </aside>
 
-          {/* 内容区 */}
-          <Content className="overflow-hidden">
-            <Tabs
-              activeKey={activeTabKey ?? "home"}
-              onChange={setActiveTab}
-              onEdit={(key, action) => {
-                if (action === "remove" && typeof key === "string") {
-                  closeTab(key);
-                }
-              }}
-              type="editable-card"
-              hideAdd
-              items={tabItems}
-              className="h-full"
-              style={{ height: "100%" }}
-              tabBarStyle={{ margin: 0, paddingLeft: 8 }}
-            />
-          </Content>
+          <main className="flex-1 flex flex-col overflow-hidden bg-background relative">
+            {showSettings ? (
+              <SettingsPage onBack={() => setShowSettings(false)} />
+            ) : tabs.length > 0 ? (
+              <Tabs value={effectiveKey} onValueChange={setActiveTab} className="flex flex-1 flex-col overflow-hidden">
+                <div className="flex items-center border-b">
+                  <TabsList className="flex-1 overflow-x-auto rounded-none bg-transparent p-0 h-auto">
+                    {tabs.map((tab) => (
+                      <TabsTrigger key={tab.key} value={tab.key} className="gap-1.5 rounded-none pr-1.5 group">
+                        {tab.type === "terminal" ? <IconTerminal2 size={14} /> : <IconFolder size={14} />}
+                        {tab.title}
+                        <span onClick={(e) => { e.stopPropagation(); closeTab(tab.key); }}
+                          className="ml-1 p-0.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">×</span>
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </div>
+                {tabs.map((tab) => (
+                  <TabsContent key={tab.key} value={tab.key} className="flex-1 overflow-hidden data-[state=inactive]:hidden">
+                    {tab.type === "terminal" ? <TerminalPage sessionId={tab.sessionId} /> : <FileManagerPage sessionId={tab.sessionId} />}
+                  </TabsContent>
+                ))}
+              </Tabs>
+            ) : (
+              <HomePage onOpenTerminal={(id, t) => openTerminalTab(id, t)} />
+            )}
+          </main>
 
-          {/* 底部状态栏 */}
-          <Footer style={{ padding: 0 }}>
-            <StatusBar activeSessionId={activeTabKey} />
-          </Footer>
-        </Layout>
-      </Layout>
-
-      {/* 连接编辑表单 */}
-      <ConnectionForm
-        open={formOpen}
-        editingProfile={editingProfile}
-        onClose={() => {
-          setFormOpen(false);
-          setEditingProfile(null);
-        }}
-        onSave={handleSaveProfile}
-      />
-    </ConfigProvider>
+          <ServerStatsPanel sessionId={activeTab?.sessionId ?? null} collapsed={rightCollapsed} />
+        </div>
+        <BottomBar activeSessionId={activeTabKey} onOpenSettings={() => setShowSettings(true)} />
+        <ConnectionForm open={formOpen} editingProfile={editingProfile}
+          onClose={() => { setFormOpen(false); setEditingProfile(null); }} onSave={handleSaveProfile} />
+      </div>
+    </TooltipProvider>
   );
 }
 
