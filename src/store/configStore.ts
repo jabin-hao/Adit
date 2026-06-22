@@ -1,7 +1,12 @@
 /**
  * 应用配置状态管理 —— 主题、字体、布局等偏好设置
+ *
+ * 双重持久化：
+ * 1. Zustand persist → localStorage（即时恢复，不受后端影响）
+ * 2. Rust settings.json → app_data_dir（跨设备持久化）
  */
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import {
   DEFAULT_FONT_FAMILY,
   DEFAULT_FONT_SIZE,
@@ -19,8 +24,8 @@ interface ConfigStore {
   /** 恢复默认设置 */
   resetConfig: () => void;
 
-  /** 从 Rust 后端加载的设置覆盖本地默认值 */
-  applyRemote: (settings: AppSettings) => void;
+  /** 从 Rust 后端加载设置覆盖本地 */
+  loadFromBackend: (settings: AppSettings) => void;
 }
 
 export const DEFAULT_CONFIG: AppSettings = {
@@ -31,13 +36,23 @@ export const DEFAULT_CONFIG: AppSettings = {
   scrollback_lines: DEFAULT_SCROLLBACK,
 };
 
-export const useConfigStore = create<ConfigStore>((set) => ({
-  config: { ...DEFAULT_CONFIG },
+export const useConfigStore = create<ConfigStore>()(
+  persist(
+    (set) => ({
+      config: { ...DEFAULT_CONFIG },
 
-  setConfig: (partial) =>
-    set((state) => ({ config: { ...state.config, ...partial } })),
+      setConfig: (partial) =>
+        set((state) => ({ config: { ...state.config, ...partial } })),
 
-  resetConfig: () => set({ config: { ...DEFAULT_CONFIG } }),
+      resetConfig: () => set({ config: { ...DEFAULT_CONFIG } }),
 
-  applyRemote: (settings) => set({ config: { ...DEFAULT_CONFIG, ...settings } }),
-}));
+      loadFromBackend: (settings) =>
+        set({ config: { ...DEFAULT_CONFIG, ...settings } }),
+    }),
+    {
+      name: "adit-settings",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ config: state.config }),
+    },
+  ),
+);

@@ -1,9 +1,11 @@
+import { useEffect, useRef } from "react";
 import { IconSun, IconMoon, IconDeviceDesktop, IconArrowLeft } from "@tabler/icons-react";
 import { useConfigStore } from "@/store/configStore";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { tauri } from "@/lib/tauri";
 
 interface SettingsPageProps {
   /** 返回按钮回调（T4 实现具体 UI；T2 仅做 prop 前向声明以保证编译） */
@@ -16,6 +18,16 @@ export function SettingsPage({ onBack }: SettingsPageProps = {}) {
   const { toggle } = useAppTheme();
   const theme = config.theme;
   const opts = [{ k: "light" as const, i: <IconSun size={16} />, l: "亮色" }, { k: "dark" as const, i: <IconMoon size={16} />, l: "暗色" }, { k: "system" as const, i: <IconDeviceDesktop size={16} />, l: "跟随系统" }];
+
+  // 配置变更时自动持久化到后端
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (mounted.current) {
+      tauri.saveSettings(config).catch(console.error);
+    } else {
+      mounted.current = true;
+    }
+  }, [config]);
 
   return (
     <div className="p-8 max-w-xl mx-auto">

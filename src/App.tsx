@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { IconTerminal2, IconFolder, IconLayoutSidebarLeftCollapse, IconLayoutSidebarLeftExpand, IconLayoutSidebarRightCollapse, IconLayoutSidebarRightExpand } from "@tabler/icons-react";
 import { ServerStatsPanel } from "@/components/server-stats/ServerStatsPanel";
 import { useSessionStore } from "@/store/sessionStore";
+import { useConfigStore } from "@/store/configStore";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { tauri } from "@/lib/tauri";
 import { ConnectionList } from "@/components/connection/ConnectionList";
@@ -27,7 +28,10 @@ function App() {
   const { theme: appTheme } = useAppTheme();
   const { tabs, activeTabKey, profiles, setProfiles, addProfile, removeProfile, openTerminalTab, closeTab, setActiveTab } = useSessionStore();
 
+  const loadFromBackend = useConfigStore((s) => s.loadFromBackend);
+
   useEffect(() => { tauri.listProfiles().then(setProfiles).catch(console.error); }, [setProfiles]);
+  useEffect(() => { tauri.getSettings().then(loadFromBackend).catch(console.error); }, [loadFromBackend]);
   useEffect(() => {
     document.documentElement.classList.toggle("dark",
       appTheme === "dark" || (appTheme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches));
