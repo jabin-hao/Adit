@@ -55,3 +55,9 @@ coverage/
 # Misc
 *.tgz
 *.gz
+
+# AI tooling
+.claude/
+.omo/
+.opencode/
+.playwright-mcp/

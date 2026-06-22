@@ -52,3 +52,6 @@ export const TERMINAL_THEME = {
   brightCyan: "#7dcfff",
   brightWhite: "#c0caf5",
 } as const;
+
+/** 服务器状态轮询间隔（毫秒） */
+export const SERVER_STATS_POLL_MS = 3000;

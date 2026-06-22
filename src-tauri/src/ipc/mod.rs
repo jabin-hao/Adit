@@ -5,3 +5,4 @@
 pub mod config_commands;
 pub mod sftp_commands;
 pub mod ssh_commands;
+pub mod stats_commands;

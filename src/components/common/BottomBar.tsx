@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
-import { IconPlugConnected } from "@tabler/icons-react";
+import { IconSettings, IconPlugConnected } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { tauri } from "@/lib/tauri";
 import { useSessionStore } from "@/store/sessionStore";
 
-interface Props { activeSessionId: string | null; }
+interface Props {
+  activeSessionId: string | null;
+  onOpenSettings: () => void;
+}
 
-export function StatusBar({ activeSessionId }: Props) {
+export function BottomBar({ activeSessionId, onOpenSettings }: Props) {
   const [version, setVersion] = useState("");
   const sessions = useSessionStore((s) => s.sessions);
   const active = activeSessionId ? sessions.get(activeSessionId) : undefined;
@@ -24,7 +29,13 @@ export function StatusBar({ activeSessionId }: Props) {
         </span>
         <span className="text-muted-foreground/60">会话数 {sessions.size}</span>
       </div>
-      <span className="flex items-center gap-1.5 text-muted-foreground/60"><IconPlugConnected size={11} /> Adit v{version}</span>
+      <div className="flex items-center gap-1">
+        <Button variant="ghost" size="icon" onClick={onOpenSettings} aria-label="设置">
+          <IconSettings size={15} />
+        </Button>
+        <ThemeToggle />
+        <span className="flex items-center gap-1.5 text-muted-foreground/60"><IconPlugConnected size={11} /> Adit v{version}</span>
+      </div>
     </footer>
   );
 }

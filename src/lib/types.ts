@@ -114,6 +114,7 @@ export interface Profile {
   port: number;
   username: string;
   auth_type: string;
+  group: string;
   created_at: number;
   updated_at: number;
 }
@@ -157,4 +158,24 @@ export interface SessionTab {
   sessionId: string;
   title: string;
   type: "terminal" | "sftp";
+}
+
+// ── 服务器状态 ──────────────────────────────────
+
+/** 服务器状态信息（与 Rust types::stats::ServerStats camelCase 对齐） */
+export interface ServerStats {
+  cpuUsagePercent: number;
+  cpuCores: number;
+  loadAvg1: number;
+  loadAvg5: number;
+  loadAvg15: number;
+  memTotalMb: number;
+  memUsedMb: number;
+  memAvailableMb: number;
+  diskTotalGb: number;
+  diskUsedGb: number;
+  uptimeSecs: number;
+  hostname: string;
+  osName: string;
+  kernelVersion: string;
 }

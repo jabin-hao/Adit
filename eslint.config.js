@@ -11,7 +11,7 @@ export default defineConfig([
   // 应用源码：完整规则
   {
     files: ["**/*.{ts,tsx}"],
-    ignores: ["**/*.test.*", "src/test/**"],
+    ignores: ["**/*.test.*", "src/test/**", "src/components/ui/**"],
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,

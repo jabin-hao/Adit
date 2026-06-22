@@ -109,6 +109,7 @@ mod tests {
             port: 22,
             username: "root".into(),
             auth_type: "password".into(),
+            group: String::new(),
             created_at: 0,
             updated_at: 0,
         };
@@ -133,6 +134,7 @@ mod tests {
             port: 22,
             username: "test".into(),
             auth_type: "agent".into(),
+            group: String::new(),
             created_at: 0,
             updated_at: 0,
         };

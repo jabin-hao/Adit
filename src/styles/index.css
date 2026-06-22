@@ -1,31 +1,135 @@
 @import "tailwindcss";
+@import "@fontsource-variable/geist/index.css";
+@import "@fontsource-variable/geist-mono/index.css";
 
-/* ── 全局重置 ── */
-html,
-body,
-#root {
+@variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 16px;
+  --ease-geist: cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --background-200: oklch(0.98 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.953 0 0);
+  --muted-foreground: oklch(0.43 0 0);
+  --accent: oklch(0.576 0.2508 258);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.58 0.248 25);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.916 0 0);
+  --input: oklch(0.916 0 0);
+  --ring: oklch(0.576 0.2508 258);
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.916 0 0);
+  --sidebar-accent: oklch(0.576 0.2508 258);
+  --radius: 6px;
+}
+
+.dark {
+  --background: oklch(0.205 0 0);
+  --background-200: oklch(0.269 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.65 0.2508 258);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.396 0.141 25);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.37 0 0);
+  --input: oklch(0.37 0 0);
+  --ring: oklch(0.65 0.2508 258);
+  --sidebar: oklch(0.269 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.3 0 0);
+  --sidebar-accent: oklch(0.65 0.2508 258);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: "Geist Variable", "Geist Sans Variable", "Geist Sans", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  code, pre, .font-mono {
+    font-family: "Geist Mono Variable", "Geist Mono", monospace;
+  }
+  .focus-ring:focus-visible {
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--accent);
+    outline: none;
+  }
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+.xterm { height: 100%; padding: 4px; }
+
+/* 隐藏 number input 原生 spinner（暗色模式有白色方框背景） */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
   margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
-/* ── xterm.js 容器 ── */
-.xterm {
-  height: 100%;
-  padding: 4px;
-}
-
-/* ── Ant Design Tabs 填充内容区 ── */
-.ant-tabs {
-  height: 100%;
-}
-
-.ant-tabs-content {
-  height: 100%;
-}
-
-.ant-tabs-tabpane {
-  height: 100%;
-  overflow: auto;
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: oklch(0.7 0 0); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: oklch(0.55 0 0); }
+.dark ::-webkit-scrollbar-thumb { background: oklch(0.4 0 0); }
+.dark ::-webkit-scrollbar-thumb:hover { background: oklch(0.55 0 0); }

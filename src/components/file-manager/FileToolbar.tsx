@@ -1,27 +1,14 @@
-/**
- * SFTP 工具栏 —— 上传、新建文件夹、刷新等操作
- *
- * TODO: 实现具体功能
- */
-import { Button, Space } from "antd";
-import { UploadOutlined, FolderAddOutlined, ReloadOutlined } from "@ant-design/icons";
+import { IconUpload, IconFolderPlus, IconRefresh } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
 
-interface FileToolbarProps {
-  onRefresh: () => void;
-}
+interface Props { onRefresh: () => void; }
 
-export function FileToolbar({ onRefresh }: FileToolbarProps) {
+export function FileToolbar({ onRefresh }: Props) {
   return (
-    <Space className="mb-2">
-      <Button size="small" icon={<UploadOutlined />}>
-        上传
-      </Button>
-      <Button size="small" icon={<FolderAddOutlined />}>
-        新建文件夹
-      </Button>
-      <Button size="small" icon={<ReloadOutlined />} onClick={onRefresh}>
-        刷新
-      </Button>
-    </Space>
+    <div className="flex items-center gap-2">
+      <Button variant="outline" size="sm"><IconUpload />上传</Button>
+      <Button variant="outline" size="sm"><IconFolderPlus />新建文件夹</Button>
+      <Button variant="outline" size="sm" onClick={onRefresh}><IconRefresh />刷新</Button>
+    </div>
   );
 }
