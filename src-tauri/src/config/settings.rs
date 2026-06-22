@@ -12,10 +12,7 @@ pub struct AppSettingsManager {
 
 impl AppSettingsManager {
     pub fn new(app_data_dir: PathBuf) -> Self {
-        Self {
-            file_path: app_data_dir.join("settings.json"),
-            cache: Mutex::new(None),
-        }
+        Self { file_path: app_data_dir.join("settings.json"), cache: Mutex::new(None) }
     }
 
     /// 读取设置（带内存缓存）
@@ -47,8 +44,7 @@ impl AppSettingsManager {
         let content = tokio::fs::read_to_string(&self.file_path)
             .await
             .map_err(|e| format!("读取设置文件失败: {}", e))?;
-        serde_json::from_str(&content)
-            .map_err(|e| format!("解析设置文件失败: {}", e))
+        serde_json::from_str(&content).map_err(|e| format!("解析设置文件失败: {}", e))
     }
 
     async fn write_to_disk(&self, settings: &AppSettings) -> Result<(), String> {
@@ -57,8 +53,8 @@ impl AppSettingsManager {
                 .await
                 .map_err(|e| format!("创建设置目录失败: {}", e))?;
         }
-        let content = serde_json::to_string_pretty(settings)
-            .map_err(|e| format!("序列化设置失败: {}", e))?;
+        let content =
+            serde_json::to_string_pretty(settings).map_err(|e| format!("序列化设置失败: {}", e))?;
         tokio::fs::write(&self.file_path, content)
             .await
             .map_err(|e| format!("写入设置文件失败: {}", e))
