@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use tauri::State;
 
 use crate::config::profile::ProfileManager;
+use crate::config::AppSettingsManager;
 use crate::types::error::CommandError;
 
 /// 已保存的连接配置
@@ -26,6 +27,18 @@ pub struct AppSettings {
     pub font_family: String, // 终端字体族
     pub default_port: u16,
     pub scrollback_lines: u32,
+}
+
+impl Default for AppSettings {
+    fn default() -> Self {
+        Self {
+            theme: "system".into(),
+            font_size: 14,
+            font_family: "'JetBrains Mono', monospace".into(),
+            default_port: 22,
+            scrollback_lines: 5000,
+        }
+    }
 }
 
 /// 保存连接配置
@@ -56,24 +69,17 @@ pub async fn delete_profile(
 
 /// 读取应用设置
 #[tauri::command]
-pub async fn get_settings(// settings: State<'_, AppSettingsManager>,  // TODO: 实现后取消注释
+pub async fn get_settings(
+    settings: State<'_, AppSettingsManager>,
 ) -> Result<AppSettings, CommandError> {
-    // TODO: 从磁盘加载设置
-    Ok(AppSettings {
-        theme: "system".into(),
-        font_size: 14,
-        font_family: "'JetBrains Mono', monospace".into(),
-        default_port: 22,
-        scrollback_lines: 5000,
-    })
+    settings.load().await.map_err(CommandError::io_error)
 }
 
 /// 保存应用设置
 #[tauri::command]
 pub async fn save_settings(
-    _settings: AppSettings,
-    // settings_state: State<'_, AppSettingsManager>,
+    new_settings: AppSettings,
+    settings: State<'_, AppSettingsManager>,
 ) -> Result<(), CommandError> {
-    // TODO: 持久化到磁盘
-    Ok(())
+    settings.save(new_settings).await.map_err(CommandError::io_error)
 }

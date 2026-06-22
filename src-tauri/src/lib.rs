@@ -84,8 +84,11 @@ pub fn run() {
             app.manage(session_mgr);
 
             let app_data_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
-            let profile_mgr = config::ProfileManager::new(app_data_dir);
+            let profile_mgr = config::ProfileManager::new(app_data_dir.clone());
             app.manage(profile_mgr);
+
+            let settings_mgr = config::AppSettingsManager::new(app_data_dir);
+            app.manage(settings_mgr);
 
             // 开发模式：启用日志和 DevTools
             if cfg!(debug_assertions) {
