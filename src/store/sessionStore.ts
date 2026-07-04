@@ -20,6 +20,8 @@ interface SessionStore {
   // ── 标签页操作 ──
   openTerminalTab: (sessionId: string, title: string) => string;
   openSftpTab: (sessionId: string, title: string) => string;
+  openSettingsTab: () => string;
+  openConnectionTab: (editingProfile?: Profile | null) => string;
   closeTab: (key: string) => void;
   setActiveTab: (key: string) => void;
 
@@ -94,6 +96,34 @@ export const useSessionStore = create<SessionStore>((set) => ({
       ],
       activeTabKey: key,
     }));
+    return key;
+  },
+
+  openSettingsTab: () => {
+    const key = "settings";
+    set((state) => {
+      if (state.tabs.some((t) => t.key === key)) {
+        return { activeTabKey: key };
+      }
+      return {
+        tabs: [...state.tabs, { key, title: "设置", type: "settings" }],
+        activeTabKey: key,
+      };
+    });
+    return key;
+  },
+
+  openConnectionTab: (editingProfile) => {
+    const key = editingProfile ? `conn-${editingProfile.id}` : `conn-new-${Date.now()}`;
+    const title = editingProfile ? `编辑 ${editingProfile.name}` : "新建连接";
+    set((state) => {
+      const existing = state.tabs.find((t) => t.key === key);
+      if (existing) return { activeTabKey: key };
+      return {
+        tabs: [...state.tabs, { key, title, type: "connection", editingProfile }],
+        activeTabKey: key,
+      };
+    });
     return key;
   },
 

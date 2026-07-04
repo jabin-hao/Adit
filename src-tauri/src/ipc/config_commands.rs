@@ -13,8 +13,14 @@ pub struct Profile {
     pub host: String,
     pub port: u16,
     pub username: String,
-    pub auth_type: String, // "password" | "key" | "agent"
-    pub group: String,     // 分组名，空字符串表示未分组
+    pub auth_type: String,         // "password" | "key" | "agent"
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub password: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub key_path: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub passphrase: Option<String>,
+    pub group: String,
     pub created_at: u64,
     pub updated_at: u64,
 }

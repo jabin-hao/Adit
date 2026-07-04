@@ -30,8 +30,8 @@ Adit — 基于 Tauri 的跨平台 SSH/SFTP 客户端。
 - **框架**: React 18+ with TypeScript strict mode
 - **构建工具**: Vite（通过 Tauri 插件集成）
 - **状态管理**: Zustand — 轻量、不可变更新风格
-- **UI 组件**: Ant Design 5.x — 优先使用其内置组件，避免自己造轮子
-- **样式**: Tailwind CSS 用于布局和微调，Ant Design token 用于主题
+- **UI 组件**: shadcn/ui + Radix UI — 基于 Radix primitives 构建，Tailwind CSS 样式
+- **样式**: Tailwind CSS v4 + CSS 变量用于布局和主题切换
 - **终端**: xterm.js 用于 SSH 终端仿真
 - **代码风格**: ESLint + Prettier，遵循 Airbnb React 风格指南
 
@@ -93,7 +93,7 @@ src-tauri/src/
 - 异步操作使用 `async/await`，避免 Promise 链式调用
 - Tauri API 调用统一在 `src/lib/tauri.ts` 中封装
 - 组件文件使用 PascalCase，工具函数文件使用 camelCase
-- 从 Ant Design 按需引入组件，避免全量导入
+- 从 `@/components/ui` 按需引入 shadcn/ui 组件
 
 ### Rust
 
@@ -108,7 +108,7 @@ src-tauri/src/
 - Git 提交信息使用中文，且必须使用例如init、feat、fix、style、chore等加冒号加信息作为标题
 - Pull Request 需通过 CI 检查（lint + build + test）
 - 新功能先在 Issue 中讨论再实现，并且在新分支内实现再合并，分支需要符合命名规范
-- 异步消息的交互禁止使用 `alert` 和 `prompt`，使用 Ant Design 的 `Modal` 和 `message`
+- 异步消息的交互禁止使用 `alert` 和 `prompt`，使用 Dialog/Toast 等 shadcn/ui 组件
 
 ## 故障排除
 
@@ -147,4 +147,4 @@ bun tauri build    # 等同于 cargo tauri build
 1. **为什么用 Tauri 而不是 Electron?** — Tauri 体积更小（~5MB vs ~120MB），内存占用更低，Rust 后端在处理 SSH 网络 I/O 时更高效。
 2. **为什么用 Bun 而不是 Node.js?** — Bun 启动更快，原生支持 TypeScript，与 Vite 集成更紧密。
 3. **为什么用 russh 而不是 ssh2?** — russh 是纯 Rust 实现，异步原生支持，与 tokio 生态集成更好，且无需依赖系统 libssh。
-4. **为什么用 Ant Design?** — 丰富的企业级组件（表格、表单、菜单），大大减少界面开发工作量。
+4. **为什么用 shadcn/ui?** — 基于 Radix UI primitives 构建，完全可控的组件代码，Tailwind CSS 深度集成，无运行时依赖开销。

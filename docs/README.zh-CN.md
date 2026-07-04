@@ -56,7 +56,7 @@ bun run build
 
 ```
 adit/
-├── src/                # React 前端（TypeScript、Ant Design、Zustand）
+├── src/                # React 前端（TypeScript、shadcn/ui、Zustand）
 ├── src-tauri/          # Rust 后端（russh、tokio、Tauri 命令）
 ├── docs/               # 文档
 └── README.md
@@ -69,7 +69,7 @@ adit/
 | 桌面框架 | Tauri 2.x |
 | 后端 | Rust + russh + tokio |
 | 前端 | React 19 + TypeScript + Bun |
-| UI 组件 | Ant Design 5 + Tailwind CSS |
+| UI 组件 | shadcn/ui + Radix UI + Tailwind CSS |
 | 终端 | xterm.js |
 | 状态管理 | Zustand |
 

@@ -1,11 +1,13 @@
-import { IconCpu, IconDatabase, IconFileDatabase, IconServer } from "@tabler/icons-react";
+import { Cpu, Database, HardDrive, Server, PanelRightClose } from "lucide-react";
 import { useServerStats } from "@/hooks/useServerStats";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   sessionId: string | null;
   /** 父组件通过 aside className 控制折叠 */
   collapsed: boolean;
+  onToggleCollapse?: () => void;
 }
 
 /** 格式化秒数为 Xd Xh Xm 可读格式 */
@@ -33,7 +35,7 @@ function ProgressBar({ value, max }: { value: number; max: number }) {
   );
 }
 
-export function ServerStatsPanel({ sessionId, collapsed }: Props) {
+export function ServerStatsPanel({ sessionId, collapsed, onToggleCollapse }: Props) {
   const { stats, status, error } = useServerStats(sessionId);
 
   return (
@@ -46,10 +48,15 @@ export function ServerStatsPanel({ sessionId, collapsed }: Props) {
       {!collapsed && (
         <div className="flex flex-col h-full bg-sidebar">
           {/* 标题栏 */}
-          <div className="flex items-center px-4 py-3 border-b border-sidebar-border">
-            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          <div className="flex items-center justify-between px-3 h-8 border-b border-sidebar-border">
+            <h2 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               服务器状态
             </h2>
+            {onToggleCollapse && (
+              <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-foreground" onClick={onToggleCollapse} aria-label="折叠侧栏">
+                <PanelRightClose size={13} />
+              </Button>
+            )}
           </div>
 
           {/* 内容区 */}
@@ -80,30 +87,30 @@ export function ServerStatsPanel({ sessionId, collapsed }: Props) {
             {status === "loaded" && stats && (
               <>
                 {/* CPU */}
-                <section className="space-y-1.5">
+                <section className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-xs font-medium text-foreground/80">
-                      <IconCpu size={14} />
+                    <span className="flex items-center gap-1 text-[11px] font-medium text-foreground/80">
+                      <Cpu size={12} />
                       CPU 使用率
                     </span>
-                    <span className="text-xs text-muted-foreground tabular-nums">
+                    <span className="text-[11px] text-muted-foreground tabular-nums">
                       {stats.cpuUsagePercent.toFixed(1)}%
                     </span>
                   </div>
                   <ProgressBar value={stats.cpuUsagePercent} max={100} />
-                  <p className="text-[11px] text-muted-foreground/60">
+                  <p className="text-[10px] text-muted-foreground/60">
                     {stats.cpuCores} 核心
                   </p>
                 </section>
 
                 {/* 内存 */}
-                <section className="space-y-1.5">
+                <section className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-xs font-medium text-foreground/80">
-                      <IconDatabase size={14} />
+                    <span className="flex items-center gap-1 text-[11px] font-medium text-foreground/80">
+                      <Database size={12} />
                       内存
                     </span>
-                    <span className="text-xs text-muted-foreground tabular-nums">
+                    <span className="text-[11px] text-muted-foreground tabular-nums">
                       {stats.memUsedMb} / {stats.memTotalMb} MB
                     </span>
                   </div>
@@ -112,8 +119,8 @@ export function ServerStatsPanel({ sessionId, collapsed }: Props) {
 
                 {/* 负载 */}
                 <section className="space-y-1">
-                  <span className="flex items-center gap-1.5 text-xs font-medium text-foreground/80">
-                    <IconServer size={14} />
+                  <span className="flex items-center gap-1 text-[11px] font-medium text-foreground/80">
+                    <Server size={12} />
                     系统负载
                   </span>
                   <div className="grid grid-cols-3 gap-1 text-center">
@@ -122,7 +129,7 @@ export function ServerStatsPanel({ sessionId, collapsed }: Props) {
                       ["5m", stats.loadAvg5],
                       ["15m", stats.loadAvg15],
                     ].map(([label, val]) => (
-                      <div key={label} className="bg-muted/30 rounded-md px-2 py-1.5">
+                      <div key={label} className="bg-muted/30 rounded px-1.5 py-1">
                         <div className="text-xs tabular-nums font-medium">
                           {(val as number).toFixed(1)}
                         </div>
@@ -133,13 +140,13 @@ export function ServerStatsPanel({ sessionId, collapsed }: Props) {
                 </section>
 
                 {/* 磁盘 */}
-                <section className="space-y-1.5">
+                <section className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-xs font-medium text-foreground/80">
-                      <IconFileDatabase size={14} />
+                    <span className="flex items-center gap-1 text-[11px] font-medium text-foreground/80">
+                      <HardDrive size={12} />
                       磁盘
                     </span>
-                    <span className="text-xs text-muted-foreground tabular-nums">
+                    <span className="text-[11px] text-muted-foreground tabular-nums">
                       {stats.diskUsedGb.toFixed(1)} / {stats.diskTotalGb.toFixed(1)} GB
                     </span>
                   </div>
@@ -147,9 +154,9 @@ export function ServerStatsPanel({ sessionId, collapsed }: Props) {
                 </section>
 
                 {/* 系统信息 */}
-                <section className="space-y-1 pt-1 border-t border-sidebar-border">
-                  <span className="text-xs font-medium text-foreground/80">系统</span>
-                  <dl className="space-y-0.5 text-[11px] text-muted-foreground">
+                <section className="space-y-0.5 pt-1 border-t border-sidebar-border">
+                  <span className="text-[11px] font-medium text-foreground/80">系统</span>
+                  <dl className="space-y-0 text-[10px] text-muted-foreground">
                     {stats.hostname && (
                       <div className="flex justify-between">
                         <dt>主机名</dt>

@@ -119,7 +119,7 @@ export const tauri = {
 
   /** 保存应用设置 */
   saveSettings(settings: AppSettings): Promise<void> {
-    return invoke("save_settings", { settings });
+    return invoke("save_settings", { newSettings: settings });
   },
 
   // ── 应用命令 ──────────────────────────────────

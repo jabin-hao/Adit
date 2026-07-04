@@ -115,6 +115,21 @@
   }
 }
 
+/* ── Frameless 窗口 ─────────────────────────── */
+
+.frameless {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+[data-tauri-drag-region] {
+  cursor: default;
+}
+[data-tauri-drag-region] button,
+[data-tauri-drag-region] a {
+  cursor: pointer;
+}
+
 .xterm { height: 100%; padding: 4px; }
 
 /* 隐藏 number input 原生 spinner（暗色模式有白色方框背景） */

@@ -5,6 +5,8 @@ import { useCallback } from "react";
 import { useConfigStore } from "../store/configStore";
 import type { AppSettings } from "../lib/types";
 
+const cycle: AppSettings["theme"][] = ["light", "dark", "system"];
+
 export function useAppTheme() {
   const theme = useConfigStore((s) => s.config.theme);
   const setConfig = useConfigStore((s) => s.setConfig);
@@ -16,5 +18,11 @@ export function useAppTheme() {
     [setConfig],
   );
 
-  return { theme, toggle };
+  /** 点击循环切换 light → dark → system → light */
+  const cycleTheme = useCallback(() => {
+    const idx = cycle.indexOf(theme);
+    setConfig({ theme: cycle[(idx + 1) % cycle.length] });
+  }, [theme, setConfig]);
+
+  return { theme, toggle, cycleTheme };
 }

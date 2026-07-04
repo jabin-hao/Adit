@@ -1,4 +1,4 @@
-import { IconArrowUp, IconFolder, IconFile, IconDownload, IconTrash } from "@tabler/icons-react";
+import { ArrowUp, Folder, File, Download, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useSftp } from "@/hooks/useSftp";
@@ -15,7 +15,7 @@ export function FileTable({ sessionId }: Props) {
   return (
     <div className="h-full flex flex-col p-4">
       <div className="flex items-center gap-2.5 mb-3">
-        <Button variant="outline" size="sm" onClick={goUp}><IconArrowUp />上级目录</Button>
+        <Button variant="outline" size="sm" onClick={goUp}><ArrowUp />上级目录</Button>
         <span className="text-xs text-muted-foreground font-mono">{currentPath}</span>
       </div>
       <div className="flex-1 overflow-auto rounded-lg border">
@@ -26,14 +26,14 @@ export function FileTable({ sessionId }: Props) {
           <TableBody>
             {files.map((f) => (
               <TableRow key={f.path} onDoubleClick={() => navigateTo(f)}>
-                <TableCell><span onClick={() => navigateTo(f)} className="inline-flex items-center gap-2 hover:text-primary transition-colors font-medium cursor-pointer">{f.is_dir ? <IconFolder size={16} className="text-amber-500" /> : <IconFile size={16} className="text-muted-foreground" />}{f.name}</span></TableCell>
+                <TableCell><span onClick={() => navigateTo(f)} className="inline-flex items-center gap-2 hover:text-primary transition-colors font-medium cursor-pointer">{f.is_dir ? <Folder size={16} className="text-amber-500" /> : <File size={16} className="text-muted-foreground" />}{f.name}</span></TableCell>
                 <TableCell className="text-muted-foreground tabular-nums text-xs">{f.is_dir ? "—" : fmtSize(f.size)}</TableCell>
                 <TableCell className="text-muted-foreground font-mono text-xs">{f.permissions}</TableCell>
                 <TableCell className="text-muted-foreground text-xs">{f.modified_at ? new Date(f.modified_at * 1000).toLocaleString() : "—"}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-0.5">
-                    {!f.is_dir && <Button variant="ghost" size="icon" className="size-7" title="下载"><IconDownload size={14} /></Button>}
-                    <Button variant="ghost" size="icon" className="size-7 text-destructive" title="删除" onClick={() => remove(f.path)}><IconTrash size={14} /></Button>
+                    {!f.is_dir && <Button variant="ghost" size="icon" className="size-7" title="下载"><Download size={14} /></Button>}
+                    <Button variant="ghost" size="icon" className="size-7 text-destructive" title="删除" onClick={() => remove(f.path)}><Trash2 size={14} /></Button>
                   </div>
                 </TableCell>
               </TableRow>

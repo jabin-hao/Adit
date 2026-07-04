@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IconPlugConnected } from "@tabler/icons-react";
+import { Plug } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { tauri } from "@/lib/tauri";
 import { useSessionStore } from "@/store/sessionStore";
@@ -24,7 +24,7 @@ export function StatusBar({ activeSessionId }: Props) {
         </span>
         <span className="text-muted-foreground/60">会话数 {sessions.size}</span>
       </div>
-      <span className="flex items-center gap-1.5 text-muted-foreground/60"><IconPlugConnected size={11} /> Adit v{version}</span>
+      <span className="flex items-center gap-1.5 text-muted-foreground/60"><Plug size={11} /> Adit v{version}</span>
     </footer>
   );
 }

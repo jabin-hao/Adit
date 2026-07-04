@@ -114,6 +114,9 @@ export interface Profile {
   port: number;
   username: string;
   auth_type: string;
+  password?: string;
+  key_path?: string;
+  passphrase?: string;
   group: string;
   created_at: number;
   updated_at: number;
@@ -153,11 +156,15 @@ export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
 // ── 标签页 ──────────────────────────────────────
 
+export type TabType = "terminal" | "sftp" | "settings" | "connection";
+
 export interface SessionTab {
   key: string;
-  sessionId: string;
+  sessionId?: string;
   title: string;
-  type: "terminal" | "sftp";
+  type: TabType;
+  /** 连接表单标签页 —— 编辑已有 Profile */
+  editingProfile?: Profile | null;
 }
 
 // ── 服务器状态 ──────────────────────────────────

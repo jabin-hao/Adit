@@ -27,7 +27,7 @@ A cross-platform SSH/SFTP client built with [Tauri](https://tauri.app) + [React]
 - 📁 **File Manager** — browse, upload, download, and edit remote files
 - 🖥️ **Terminal** — full SSH terminal emulation via xterm.js
 - 📋 **Tabbed UI** — manage multiple servers in one window
-- 🎨 **Light/Dark** — Ant Design theme switching
+- 🎨 **Light/Dark** — shadcn/ui CSS 变量主题切换
 - ⚡ **Lightweight** — ~5MB binary, Rust backend for I/O
 
 ## Quick Start
@@ -60,7 +60,7 @@ bun run build
 | Desktop | Tauri 2.x |
 | Backend | Rust + russh + tokio |
 | Frontend | React 19 + TypeScript + Bun |
-| UI | Ant Design 5 + Tailwind CSS |
+| UI | shadcn/ui + Radix UI + Tailwind CSS |
 | Terminal | xterm.js |
 | State | Zustand |
 
@@ -68,7 +68,7 @@ bun run build
 
 ```
 adit/
-├── src/                # React frontend (TypeScript, Ant Design, Zustand)
+├── src/                # React frontend (TypeScript, shadcn/ui, Zustand)
 ├── src-tauri/          # Rust backend (russh, tokio, Tauri commands)
 ├── docs/               # Documentation
 └── README.md

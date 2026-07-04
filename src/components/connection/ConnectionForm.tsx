@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { DEFAULT_SSH_PORT } from "@/lib/constants";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,9 @@ interface ConnectionFormProps {
 export interface FormValues {
   name: string; host: string; port: number; username: string;
   auth_type: "password" | "key" | "agent";
+  password?: string;
+  key_path?: string;
+  passphrase?: string;
   group: string;
 }
 
@@ -33,12 +37,17 @@ export function ConnectionForm({ open, editingProfile, onClose, onSave }: Connec
   );
 }
 
-function FormBody({ editingProfile, onClose, onSave }: { editingProfile?: Profile | null; onClose: () => void; onSave: (values: FormValues) => void }) {
+export function FormBody({ editingProfile, onClose, onSave }: { editingProfile?: Profile | null; onClose: () => void; onSave: (values: FormValues) => void }) {
   const [name, setName] = useState(editingProfile?.name ?? "");
   const [host, setHost] = useState(editingProfile?.host ?? "");
   const [port, setPort] = useState(String(editingProfile?.port ?? DEFAULT_SSH_PORT));
   const [username, setUsername] = useState(editingProfile?.username ?? "");
   const [authType, setAuthType] = useState<string>(editingProfile?.auth_type ?? "password");
+  const [password, setPassword] = useState(editingProfile?.password ?? "");
+  const [keyPath, setKeyPath] = useState(editingProfile?.key_path ?? "");
+  const [passphrase, setPassphrase] = useState(editingProfile?.passphrase ?? "");
+  const [showPwd, setShowPwd] = useState(false);
+  const [showPassphrase, setShowPassphrase] = useState(false);
   const [group, setGroup] = useState(editingProfile?.group ?? "");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -52,8 +61,10 @@ function FormBody({ editingProfile, onClose, onSave }: { editingProfile?: Profil
     if (!host.trim()) e.host = "不能为空";
     const p = Number(port); if (!port || p < 1 || p > 65535) e.port = "1–65535";
     if (!username.trim()) e.username = "不能为空";
+    if (authType === "password" && !password) e.password = "不能为空";
+    if (authType === "key" && !keyPath.trim()) e.key_path = "不能为空";
     setErrors(e); return Object.keys(e).length === 0;
-  }, [name, host, port, username]);
+  }, [name, host, port, username, authType, password, keyPath]);
 
   return (
     <>
@@ -72,6 +83,38 @@ function FormBody({ editingProfile, onClose, onSave }: { editingProfile?: Profil
             </SelectContent>
           </Select>
         </div>
+        {authType === "password" && (
+          <div className="space-y-1.5">
+            <Label htmlFor="c-pwd">密码</Label>
+            <div className="relative">
+              <Input id="c-pwd" type={showPwd ? "text" : "password"} placeholder="输入 SSH 密码" value={password} onChange={(e) => setPassword(e.target.value)} className="pr-8" />
+              <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                onClick={() => setShowPwd((v) => !v)} tabIndex={-1}>
+                {showPwd ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
+            {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
+          </div>
+        )}
+        {authType === "key" && (
+          <>
+            <div className="space-y-1.5">
+              <Label htmlFor="c-key">私钥路径</Label>
+              <Input id="c-key" placeholder="~/.ssh/id_rsa" value={keyPath} onChange={(e) => setKeyPath(e.target.value)} />
+              {errors.key_path && <p className="text-xs text-destructive">{errors.key_path}</p>}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="c-pp">密钥密码（可选）</Label>
+              <div className="relative">
+                <Input id="c-pp" type={showPassphrase ? "text" : "password"} placeholder="私钥密码" value={passphrase} onChange={(e) => setPassphrase(e.target.value)} className="pr-8" />
+                <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowPassphrase((v) => !v)} tabIndex={-1}>
+                  {showPassphrase ? <EyeOff size={14} /> : <Eye size={14} />}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
         <div className="space-y-1.5"><Label htmlFor="c-group">分组</Label>
           <Input id="c-group" placeholder="默认" list="group-suggestions" value={group} onChange={(e) => setGroup(e.target.value)} />
           {existingGroups.length > 0 && (
@@ -81,7 +124,12 @@ function FormBody({ editingProfile, onClose, onSave }: { editingProfile?: Profil
       </div>
       <DrawerFooter>
         <Button variant="outline" onClick={onClose}>取消</Button>
-        <Button onClick={() => validate() && onSave({ name: name.trim(), host: host.trim(), port: Number(port), username: username.trim(), auth_type: authType as FormValues["auth_type"], group: group.trim() })}>保存</Button>
+        <Button onClick={() => validate() && onSave({
+          name: name.trim(), host: host.trim(), port: Number(port),
+          username: username.trim(), auth_type: authType as FormValues["auth_type"],
+          password, key_path: keyPath, passphrase: passphrase || undefined,
+          group: group.trim(),
+        })}>保存</Button>
       </DrawerFooter>
     </>
   );
